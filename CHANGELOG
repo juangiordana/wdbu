@@ -1,0 +1,34 @@
+* 0.6.0 (2014-07-09)
+
+    * Rename settings file from `.htbackup` to `etc/backup.conf`.
+
+* 0.5.0 (2010-07-02)
+
+    * Support LZMA2 (xz) compression.
+
+0.4.0 (2010-02-02)
+
+    * Created ChangeLog, INSTALL, LICENSE, README and TODO.
+    * Remove `LOG_FILE='/path/to/log'` and `MAILTO='user@domain.tld'` variables, since all output is now echoed to STDOUT.
+    * Remove `PATH` variable, it should configured system wide.
+
+* 0.3.0 (2008-12-12)
+
+    * Files now can be excluded.
+    * Disable dump of specific tables in `.htbackup` files.
+    * Support for dumping database structure only.
+    * Removed logging support.
+
+* 0.2.0 (2006-02-20)
+
+    * Renamed `.backup` to `.htbackup` to improve security.
+    * Unify the log file to a single file `LOG_FILE=/var/log/wdbu-backup.log`.
+
+* 0.1.0 (2006-02-11)
+
+    * Initial release.
+    * All the control is given to `.backup` files, so the script will not backup everything every time inside the backup root directory anymore.
+    * Added support for excluding directories inside the root backup directory which is good to avoid backing up test sites or PhpMyAdmin.
+    * Per site MySQL dumps are now optional.
+    * Unified site backup. The database is now included in the site's backup and is not saved to an external `DBs/dbname.sql.bz2` file.
+    * The script now returns with an exit status.
