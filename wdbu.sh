@@ -4,8 +4,8 @@
 ## Settings.
 ##
 
-# Backup settings file name.
-SETTINGS_FILE='backup.conf'
+# Relative path to backup configuration file.
+SETTINGS_FILE='etc/backup.conf'
 
 # Automatically mount backup root directory.
 AUTO_MOUNT=0
@@ -105,7 +105,7 @@ do
     BASENAME=${PATHNAME##*/}
 
     # If there is no backup configuration file, skip directory.
-    if [ ! -r ${PATHNAME}/etc/${SETTINGS_FILE} ] ; then
+    if [ ! -r ${PATHNAME}/${SETTINGS_FILE} ] ; then
         NOBACKUP="${NOBACKUP}\n${PATHNAME}"
         continue
     fi
@@ -121,8 +121,7 @@ do
     fi
 
     # Source $SETTINGS_FILE file to find out if we must run the backup.
-    source ${PATHNAME}/etc/${SETTINGS_FILE}
-
+    source ${PATHNAME}/${SETTINGS_FILE}
 
     # Backup files in current directory.
     if [ -n "${BACKUP_FILES}" ] ; then
