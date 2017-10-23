@@ -1,6 +1,16 @@
 #! /bin/bash
 
 ##
+## Settings.
+##
+
+# Backup settings file name.
+SETTINGS_FILE='backup.conf'
+
+# Automatically mount backup root directory.
+AUTO_MOUNT=0
+
+##
 ## Validations.
 ##
 
@@ -23,7 +33,7 @@ if [ ! -d "$1" ] ; then
 fi
 
 ##
-## Settings.
+## Runtime configuration.
 ##
 
 # Files (sources) root directory.
@@ -31,12 +41,6 @@ ROOT_FILES="$1"
 
 # Backup (destination) root directory.
 ROOT_BACKUP="$2"
-
-# Backup settings file name.
-SETTINGS_FILE='backup.conf'
-
-# Automatically mount backup root directory.
-AUTO_MOUNT=0
 
 # Automatically unmount backup root directory if necessary.
 AUTO_UMOUNT="${AUTO_MOUNT}"
