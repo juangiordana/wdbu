@@ -234,8 +234,8 @@ if [ ${AUTO_UMOUNT} -eq 1 ] ; then
     umount ${ROOT_BACKUP}
 
     if [ $? -ne 0 ] ; then
-        echo "Warning: Unable to umount ${ROOT_BACKUP}" 1>&2
-        echo "You MUST umount ${ROOT_BACKUP} manually." 1>&2
+        echo "Warning: Unable to unmount ${ROOT_BACKUP}" 1>&2
+        echo "You MUST unmount ${ROOT_BACKUP} manually." 1>&2
         exit 1
     fi
 fi
