@@ -143,10 +143,10 @@ cd "${DESTDIR}"
 NOBACKUP="lost+found"
 
 # List of databases.
-MYSQL_DBS=$( mysql -e 'SHOW DATABASES' )
+MYSQL_ALL_DBS=$( mysql -e 'SHOW DATABASES' )
 
 
-if [ -z "${MYSQL_DBS}" ] ; then
+if [ -z "${MYSQL_ALL_DBS}" ] ; then
     echo "Warning: No databases found. MySQL backups will be skipped."
 fi
 
@@ -203,10 +203,10 @@ do
 
 
     # Dump MySQL databases.
-    if [ -n "${MYSQL_DBS}" ] && [ -n "${MYSQL_DB}" ] ; then
-        for j in ${MYSQL_DB}
+    if [ -n "${MYSQL_ALL_DBS}" ] && [ -n "${MYSQL_DBS}" ] ; then
+        for j in ${MYSQL_DBS}
         do
-            if echo "${j}" | grep -q "${MYSQL_DBS}" ; then
+            if echo "${j}" | grep -q "${MYSQL_ALL_DBS}" ; then
                 # Dump database structure only.
                 bkp_mysql_mysqldump_struct $j ${DESTDIR}/${BASENAME}/${j}-struct.sql
 
@@ -218,7 +218,7 @@ do
         echo "   - Skipping DB backup for ${PATHNAME}"
     fi
 
-    unset MYSQL_DB MYSQL_IGNORE
+    unset MYSQL_DBS MYSQL_IGNORE
 
 
     # Make a .tar[.(xz|bz2|gz)] of current directory.
