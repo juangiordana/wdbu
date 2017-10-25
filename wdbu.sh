@@ -172,8 +172,8 @@ do
         if [ -n "${MYSQL_IGNORE}" ] ; then
             for j in ${MYSQL_IGNORE}
             do
-                echo "   - Ignoring table '${MYSQL_DB}.${j}'"
-                DUMPOPTS="${DUMPOPTS} --ignore-table='${MYSQL_DB}.${j}'"
+                echo "   - Ignoring table '${j}'"
+                DUMPOPTS="${DUMPOPTS} --ignore-table='${j}'"
             done
             unset MYSQL_IGNORE
         fi
