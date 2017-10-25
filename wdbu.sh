@@ -49,6 +49,58 @@ AUTO_UMOUNT="${AUTO_MOUNT}"
 DESTDIR="${ROOT_BACKUP}/$( date +%F'-'%H'-'%M'-'%S )"
 
 ##
+## Functions.
+##
+
+# $1 database name.
+# $2 full path to destination file.
+bkp_mysql_mysqldump_struct () {
+    if [ -z "$1" ] || [ -z "$2" ] ; then
+        echo "Error: Missing arguments in bkp_mysql_mysqldump_struct()." 1>&2
+        exit 1
+    fi
+
+    echo "   - Dumping database structure for '${1}'."
+    mysqldump --compact --no-data --databases ${1} > ${2}
+
+    if [ $? -ne 0 ] ; then
+        echo "Error: mysqldump exited with status: ${?}." 1>&2
+        exit 1
+    fi
+}
+
+# $1 database name.
+# $2 full path to destination file.
+# $3 ignored tables (optional).
+bkp_mysql_mysqldump () {
+    if [ -z "$1" ] || [ -z "$2" ] ; then
+        echo "Error: Missing arguments in bkp_mysql_mysqldump()." 1>&2
+        exit 1
+    fi
+
+    # Dump full database information.
+    echo "   - Dumping full database '${1}'."
+
+    DUMPOPTS="--opt --lock-all-tables --skip-quick"
+
+    # Ignore tables.
+    if [ -n "${3}" ] ; then
+        for j in ${3}
+        do
+            echo "   - Ignoring table '${j}'"
+            DUMPOPTS="${DUMPOPTS} --ignore-table='${j}'"
+        done
+    fi
+
+    mysqldump ${DUMPOPTS} --databases ${1} > ${2}
+
+    if [ $? -ne 0 ] ; then
+        echo "Error: mysqldump exited with status: ${?}." 1>&2
+        exit 1
+    fi
+}
+
+##
 ## Action!
 ##
 
@@ -150,45 +202,23 @@ do
     fi
 
 
-    # Dump MySQL database.
-    if [ -n "${MYSQL_DBS}" ] && [ -n "${MYSQL_DB}" ] && echo "${MYSQL_DB}" | grep -q "${MYSQL_DBS}" ; then
-        # Dump database structure only.
-        echo "   - Dumping DB structure for ${MYSQL_DB}"
+    # Dump MySQL databases.
+    if [ -n "${MYSQL_DBS}" ] && [ -n "${MYSQL_DB}" ] ; then
+        for j in ${MYSQL_DB}
+        do
+            if echo "${j}" | grep -q "${MYSQL_DBS}" ; then
+                # Dump database structure only.
+                bkp_mysql_mysqldump_struct $j ${DESTDIR}/${BASENAME}/${j}-struct.sql
 
-        DUMPOPTS="--compact --no-data"
-        mysqldump ${DUMPOPTS} --databases ${MYSQL_DB} > ${DESTDIR}/${BASENAME}/${MYSQL_DB}-struct.sql
-
-        if [ $? -ne 0 ] ; then
-            echo "Error: mysqldump exited with status: ${?}." 1>&2
-            exit 1
-        fi
-
-        # Dump full database information.
-        echo "   - Dumping DB ${MYSQL_DB}"
-
-        DUMPOPTS="--opt --lock-all-tables --skip-quick"
-
-        # Ignore tables.
-        if [ -n "${MYSQL_IGNORE}" ] ; then
-            for j in ${MYSQL_IGNORE}
-            do
-                echo "   - Ignoring table '${j}'"
-                DUMPOPTS="${DUMPOPTS} --ignore-table='${j}'"
-            done
-            unset MYSQL_IGNORE
-        fi
-
-        mysqldump ${DUMPOPTS} --databases ${MYSQL_DB} > ${DESTDIR}/${BASENAME}/${MYSQL_DB}.sql
-
-        if [ $? -ne 0 ] ; then
-            echo "Error: mysqldump exited with status: ${?}." 1>&2
-            exit 1
-        fi
-
-        unset MYSQL_DB
+                # Dump full database information.
+                bkp_mysql_mysqldump $j ${DESTDIR}/${BASENAME}/${j}.sql ${MYSQL_IGNORE}
+            fi
+        done
     else
         echo "   - Skipping DB backup for ${PATHNAME}"
     fi
+
+    unset MYSQL_DB MYSQL_IGNORE
 
 
     # Make a .tar[.(xz|bz2|gz)] of current directory.
@@ -214,6 +244,7 @@ do
     fi
 
     unset COMPRESS
+
 
     # Remove previously copied files.
     rm -r ${DESTDIR}/${BASENAME}
