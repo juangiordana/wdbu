@@ -200,7 +200,7 @@ do
     if [ -n "${BACKUP_FILES}" ] ; then
         echo "   - Creating files backup."
 
-        RSYNC_OPTS='-a --delete-after --delete-excluded'
+        RSYNC_OPTS='--archive --delete-after --delete-excluded'
 
         # Build list of excluded files or directories.
         if [ -n "${EXCLUDE}" ] ; then
