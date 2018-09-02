@@ -61,7 +61,16 @@ bkp_mysql_mysqldump_struct () {
     fi
 
     echo "   - Dumping database structure for '${1}'."
-    mysqldump --compact --no-data --databases ${1} > ${2}
+
+    # --compact implies:
+    #   --skip-add-drop-table
+    #   --skip-add-locks,
+    #   --skip-comments
+    #   --skip-disable-keys
+    #   --skip-set-charset
+    DUMPOPTS="--compact --set-charset"
+    DUMPOPTS="${DUMPOPTS} --no-data"
+    mysqldump ${DUMPOPTS} --databases ${1} > ${2}
 
     if [ $? -ne 0 ] ; then
         echo "Error: mysqldump exited with status: ${?}." 1>&2
@@ -79,9 +88,21 @@ bkp_mysql_mysqldump () {
     fi
 
     # Dump full database information.
-    echo "   - Dumping full database '${1}'."
+    echo "   - Dumping database data for '${1}'."
 
-    DUMPOPTS="--opt --lock-all-tables --skip-quick"
+    # --opt implies:
+    #   --add-drop-table
+    #   --add-locks
+    #   --create-options
+    #   --disable-keys
+    #   --extended-insert
+    #   --lock-tables
+    #   --quick
+    #   --set-charset
+    DUMPOPTS="--opt"
+    DUMPOPTS="${DUMPOPTS} --skip-add-drop-table --skip-create-options --skip-quick"
+    DUMPOPTS="${DUMPOPTS} --skip-comments --no-create-db --no-create-info"
+    DUMPOPTS="${DUMPOPTS} --lock-tables --single-transaction"
 
     # Ignore tables.
     if [ -n "${3}" ] ; then
