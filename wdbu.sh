@@ -108,7 +108,7 @@ bkp_mysql_mysqldump () {
     if [ -n "${3}" ] ; then
         for j in ${3}
         do
-            echo "   - Ignoring table '${j}'"
+            echo "     - Ignoring table '${j}'."
             DUMPOPTS="${DUMPOPTS} --ignore-table='${j}'"
         done
     fi
@@ -130,7 +130,7 @@ if [ "${AUTO_MOUNT}" -eq 1 ] ; then
     mountpoint -q ${ROOT_BACKUP}
 
     if [ $? -ne 0 ] ; then
-		mount ${ROOT_BACKUP}
+        mount ${ROOT_BACKUP}
 
         if [ $? -ne 0 ] ; then
             echo "Error: Unable to mount '${ROOT_BACKUP}'." 1>&2
@@ -138,7 +138,7 @@ if [ "${AUTO_MOUNT}" -eq 1 ] ; then
         fi
     else
         # Ensure ${ROOT_BACKUP} is mounted in read-write mode.
-		mount -o remount,rw ${ROOT_BACKUP}
+        mount -o remount,rw ${ROOT_BACKUP}
 
         if [ $? -ne 0 ] ; then
             echo "Error: Unable to remount '${ROOT_BACKUP}' in read-write mode." 1>&2
@@ -156,7 +156,7 @@ if [ $? -ne 0 ] ; then
 fi
 
 # Begin backup.
-echo -e "--\n-- New Backup started - " $( date +%F'-'%X ) "\n--"
+echo -e "--\n-- New Backup started -" $( date +%F'-'%X ) "\n--"
 
 cd "${DESTDIR}"
 
@@ -206,7 +206,7 @@ do
         if [ -n "${EXCLUDE}" ] ; then
             for j in ${EXCLUDE}
             do
-                echo "   . excluding '${j}'"
+                echo "     - Ignoring '${j}'."
                 RSYNC_OPTS="${RSYNC_OPTS} --exclude ${j}"
             done
             unset EXCLUDE
@@ -236,24 +236,24 @@ do
             fi
         done
     else
-        echo "   - Skipping DB backup for ${PATHNAME}"
+        echo "   - No database backup for ${BASENAME}."
     fi
 
     unset MYSQL_DBS MYSQL_IGNORE
 
 
     # Make a .tar[.(xz|bz2|gz)] of current directory.
-    if  [ "${COMPRESS}" = "lzma" ] ; then
-        echo "   - Creating ${BASENAME}.tar.xz"
-        TAROPTS="cJf ${BASENAME}.tar.xz"
-    elif  [ "${COMPRESS}" = "bzip" ] ; then
-        echo "   - Creating ${BASENAME}.tar.bz2"
+    if  [ "${COMPRESS}" = "bzip" ] ; then
+        echo "   - Creating ${BASENAME}.tar.bz2."
         TAROPTS="cjf ${BASENAME}.tar.bz2"
     elif  [ "${COMPRESS}" = "gzip" ] ; then
-        echo "   - Creating ${BASENAME}.tar.gz"
+        echo "   - Creating ${BASENAME}.tar.gz."
         TAROPTS="czf ${BASENAME}.tar.gz"
+    elif  [ "${COMPRESS}" = "lzma" ] ; then
+        echo "   - Creating ${BASENAME}.tar.xz."
+        TAROPTS="cJf ${BASENAME}.tar.xz"
     else
-        echo "   - Creating ${BASENAME}.tar"
+        echo "   - Creating ${BASENAME}.tar."
         TAROPTS="cf ${BASENAME}.tar"
     fi
 
@@ -274,10 +274,10 @@ do
 done
 
 
-echo -e "The Backup was successfully stored inside ${DESTDIR}\n"
+echo -e "The Backup was successfully stored inside ${DESTDIR}.\n"
 
 if [ -n "${NOBACKUP}" ] ; then
-    echo "The following directories were excluded:"
+    echo -e "--\n-- The following directories were excluded:\n--"
     echo -e "${NOBACKUP}"
 fi
 
