@@ -151,7 +151,7 @@ if [ -z "${MYSQL_ALL_DBS}" ] ; then
 fi
 
 
-for PATHNAME in $( find ${ROOT_FILES} -maxdepth 1 -mindepth 1 -type d )
+for PATHNAME in $( find ${ROOT_FILES} -maxdepth 1 -mindepth 1 -type d | sort )
 do
     #DIRNAME=${PATHNAME%/*}
     BASENAME=${PATHNAME##*/}
