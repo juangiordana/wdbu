@@ -54,13 +54,13 @@ DESTDIR="${ROOT_BACKUP}/$( date +%F'-'%H'-'%M'-'%S )"
 
 # $1 database name.
 # $2 full path to destination file.
-bkp_mysql_mysqldump_struct () {
+bkp_mysql_mysqldump_schema () {
     if [ -z "$1" ] || [ -z "$2" ] ; then
-        echo "Error: Missing arguments in bkp_mysql_mysqldump_struct()." 1>&2
+        echo "Error: Missing arguments in ${FUNCNAME}()." 1>&2
         exit 1
     fi
 
-    echo "   - Dumping database structure for '${1}'."
+    echo "   - Dumping database schema for '${1}'."
 
     # --compact implies:
     #   --skip-add-drop-table
@@ -83,7 +83,7 @@ bkp_mysql_mysqldump_struct () {
 # $3 ignored tables (optional).
 bkp_mysql_mysqldump () {
     if [ -z "$1" ] || [ -z "$2" ] ; then
-        echo "Error: Missing arguments in bkp_mysql_mysqldump()." 1>&2
+        echo "Error: Missing arguments in ${FUNCNAME}()." 1>&2
         exit 1
     fi
 
@@ -228,8 +228,8 @@ do
         for j in ${MYSQL_DBS}
         do
             if echo "${j}" | grep -q "${MYSQL_ALL_DBS}" ; then
-                # Dump database structure only.
-                bkp_mysql_mysqldump_struct $j ${DESTDIR}/${BASENAME}/${j}-struct.sql
+                # Dump database schema separately.
+                bkp_mysql_mysqldump_schema $j ${DESTDIR}/${BASENAME}/${j}-schema.sql
 
                 # Dump full database information.
                 bkp_mysql_mysqldump $j ${DESTDIR}/${BASENAME}/${j}.sql ${MYSQL_IGNORE}
