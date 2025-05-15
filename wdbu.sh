@@ -234,7 +234,7 @@ for PATHNAME in $(find ${ROOT_FILES} -maxdepth 1 -mindepth 1 -type d | sort); do
 
   unset MYSQL_DBS MYSQL_IGNORE
 
-  # Make a .tar[.(xz|bz2|gz)] of current directory.
+  # Make a .tar[.(bz2|gz|xz|zst)] of current directory.
   if [ "${COMPRESS}" = "bzip" ]; then
     echo "   - Creating ${BASENAME}.tar.bz2."
     TAROPTS="cjf ${BASENAME}.tar.bz2"
@@ -244,6 +244,9 @@ for PATHNAME in $(find ${ROOT_FILES} -maxdepth 1 -mindepth 1 -type d | sort); do
   elif [ "${COMPRESS}" = "lzma" ]; then
     echo "   - Creating ${BASENAME}.tar.xz."
     TAROPTS="cJf ${BASENAME}.tar.xz"
+  elif [ "${COMPRESS}" = "zstd" ]; then
+    echo "   - Creating ${BASENAME}.tar.zst."
+    TAROPTS="--zstd -cf ${BASENAME}.tar.zst"
   else
     echo "   - Creating ${BASENAME}.tar."
     TAROPTS="cf ${BASENAME}.tar"
